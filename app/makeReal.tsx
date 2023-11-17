@@ -44,22 +44,17 @@ export async function makeReal(editor: Editor) {
 		// It's okay if this is undefined—it will just mean that we'll use the
 		// one in the .env file instead.
 		const apiKeyFromDangerousApiKeyInput = (
-			document.body.querySelector(
-				'#openai_key_risky_but_cool'
-			) as HTMLInputElement
+			document.body.querySelector('#openai_key_risky_but_cool') as HTMLInputElement
 		)?.value
 
 		// make a request to openai. `fetchFromOpenAi` is a next.js server action,
 		// so our api key is hidden.
-		const openAiResponse = await fetchFromOpenAi(
-			apiKeyFromDangerousApiKeyInput,
-			{
-				model: 'gpt-4-vision-preview',
-				max_tokens: 4096,
-				temperature: 0,
-				messages: prompt,
-			}
-		)
+		const openAiResponse = await fetchFromOpenAi(apiKeyFromDangerousApiKeyInput, {
+			model: 'gpt-4-vision-preview',
+			max_tokens: 4096,
+			temperature: 0,
+			messages: prompt,
+		})
 
 		// populate the response shape with the html we got back from openai.
 		populateResponseShape(editor, responseShapeId, openAiResponse)
@@ -86,11 +81,11 @@ async function buildPromptForOpenAi(editor: Editor): Promise<GPT4VMessage[]> {
 			type: 'text',
 			text: 'Turn this into a single html file using tailwind.',
 		},
-    {
-      // send the text of all selected shapes, so that GPT can use it as a reference (if anything is hard to see)
-      type: 'text',
-      text: getSelectionAsText(editor),
-    }
+		{
+			// send the text of all selected shapes, so that GPT can use it as a reference (if anything is hard to see)
+			type: 'text',
+			text: getSelectionAsText(editor),
+		},
 	]
 
 	// if the user has selected a previous response from gpt-4, include that too. hopefully gpt-4 will
@@ -166,8 +161,7 @@ function getContentOfPreviousResponse(editor: Editor) {
 
 function getSelectionAsText(editor: Editor) {
 	const selectedShapeIds = editor.getSelectedShapeIds()
-	const selectedShapeDescendantIds =
-		editor.getShapeAndDescendantIds(selectedShapeIds)
+	const selectedShapeDescendantIds = editor.getShapeAndDescendantIds(selectedShapeIds)
 
 	const texts = Array.from(selectedShapeDescendantIds)
 		.map((id) => {
@@ -182,8 +176,9 @@ function getSelectionAsText(editor: Editor) {
 				// @ts-expect-error
 				return shape.props.text
 			}
+			return null
 		})
-		.filter((v) => v !== null)
+		.filter((v) => v !== null && v !== '')
 
 	return texts.join('\n')
 }
