@@ -39,3 +39,7 @@ If you'd like Make Real to create something other than HTML, you'll need to
 either update the [`ResponseShape`](./app/ResponseShape/ResponseShape.tsx) to
 display something different, or use one of tldraw's built-in shapes like image
 or text.
+
+## The dangerous API key input method
+
+For prototyping or at least until the vision APIs are able to support higher usage limits, we've also included the `RiskyButCoolAPIKeyInput`, similar to the one found on https://makereal.tldraw.com. Please use this as carefully and ethically as you can, as users should be reluctant to add API keys to public sites.
