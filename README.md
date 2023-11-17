@@ -1,18 +1,18 @@
 # Make Real
 
 Use this repo as a template to create Make Real style apps like
-https://makereal.tldraw.com. To get started:
+[makereal.tldraw.com](https://makereal.tldraw.com). To get started:
 
 1. Use the template and clone your new repo to your computer
 2. Run `npm install` to install dependencies
-3. Get an OpenAI API key from https://platform.openai.com/api-keys. Make sure
+3. Get an OpenAI API key from [platform.openai.com/api-keys](https://platform.openai.com/api-keys). Make sure
    you are at least a
    [Tier 1](https://platform.openai.com/docs/guides/rate-limits/usage-tiers) API
    user, which means you have access to GPT-4 Vision. You can check your tier on
    the [OpenAI API Limits](https://platform.openai.com/account/limits).
 4. Create a `.env.local` file that contains `OPENAI_API_KEY=your api key here`
 5. Run `npm run dev`
-6. Open http://localhost:3000 and make some stuff real!
+6. Open [localhost:3000](http://localhost:3000) and make some stuff real!
 
 ## How it works
 
@@ -42,4 +42,4 @@ or text.
 
 ## The dangerous API key input method
 
-For prototyping or at least until the vision APIs are able to support higher usage limits, we've also included the `RiskyButCoolAPIKeyInput`, similar to the one found on https://makereal.tldraw.com. Please use this as carefully and ethically as you can, as users should be reluctant to add API keys to public sites.
+For prototyping or at least until the vision APIs are able to support higher usage limits, we've also included the `RiskyButCoolAPIKeyInput`, similar to the one found on [makereal.tldraw.com](https://makereal.tldraw.com). Please use this as carefully and ethically as you can, as users should be reluctant to add API keys to public sites.
