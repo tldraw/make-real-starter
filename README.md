@@ -16,21 +16,19 @@ https://makereal.tldraw.com. To get started:
 
 ## How it works
 
-Make Real is built on [tldraw](tldraw.dev), a very good React library for
+Make Real is built with [tldraw](tldraw.dev), a very good React library for
 creating whiteboards and other infinite canvas experiences.
 
-Users can use tldraw's tools to sketch out a mock for a piece of UI. When
-they're ready, they can select their drawing, and press the Make Real button.
-We'll capture an image of their sketch, and send it to
+To use it, first draw a mockup for a piece of UI. When
+you're ready, select the drawing, and press the Make Real button.
+We'll capture an image of your selection, and send it to
 [OpenAI's GPT-4V](https://platform.openai.com/docs/guides/vision) along with
 instructions to turn it into a HTML file.
 
 We take the HTML response and add it to a tldraw
 [custom shape](https://tldraw.dev/docs/shapes#Custom-shapes). The custom shape
-shows the response in an iframe that the user can interact with. If the user
-wants to iterate on the response, they can annotate the response, select it &
-the annotations, and press 'Make Real' again to repeat the process with the last
-response as a starting point.
+shows the response in an iframe so that you can interact with it on the canvas. If you
+want to iterate on the response, annotate the iframe, select it all, and press 'Make Real' again.
 
 ## To make changes
 
