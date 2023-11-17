@@ -86,6 +86,11 @@ async function buildPromptForOpenAi(editor: Editor): Promise<GPT4VMessage[]> {
 			type: 'text',
 			text: 'Turn this into a single html file using tailwind.',
 		},
+    {
+      // send the text of all selected shapes, so that GPT can use it as a reference (if anything is hard to see)
+      type: 'text',
+      text: getSelectionAsText(editor),
+    }
 	]
 
 	// if the user has selected a previous response from gpt-4, include that too. hopefully gpt-4 will
