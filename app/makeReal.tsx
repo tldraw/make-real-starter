@@ -1,4 +1,12 @@
-import { Editor, TLShapeId, createShapeId } from "@tldraw/tldraw";
+import {
+  Editor,
+  TLArrowShape,
+  TLGeoShape,
+  TLGroupShape,
+  TLShapeId,
+  TLTextShape,
+  createShapeId,
+} from "@tldraw/tldraw";
 import { ResponseShape } from "./ResponseShape/ResponseShape";
 import { getSelectionAsImageDataUrl } from "./lib/getSelectionAsImageDataUrl";
 import {
@@ -19,6 +27,7 @@ The user may also include images of other websites as style references. Transfer
 They may also provide you with the html of a previous design that they want you to iterate from.
 Carry out any changes they request from you.
 In the wireframe, the previous design's html will appear as a white rectangle.
+For your reference, all text from the image will also be provided to you as a list of strings, separated by newlines. Use them as a reference if any text is hard to read.
 Use creative license to make the application more fleshed out.
 Use JavaScript modules and unpkg to import any necessary dependencies.
 
@@ -72,6 +81,11 @@ async function buildPromptForOpenAi(editor: Editor): Promise<GPT4VMessage[]> {
     {
       type: "text",
       text: "Turn this into a single html file using tailwind.",
+    },
+    {
+      // Get the text of all selected shapes, so that GPT can use it as a reference (if anything is hard to see)
+      type: "text",
+      text: getSelectionAsText(editor),
     },
   ];
 
@@ -144,4 +158,28 @@ function getContentOfPreviousResponse(editor: Editor) {
   }
 
   return previousResponses[0].props.html;
+}
+
+function getSelectionAsText(editor: Editor) {
+  const selectedShapeIds = editor.getSelectedShapeIds();
+  const selectedShapeDescendantIds =
+    editor.getShapeAndDescendantIds(selectedShapeIds);
+
+  const texts = Array.from(selectedShapeDescendantIds)
+    .map((id) => {
+      const shape = editor.getShape(id);
+      if (!shape) return null;
+      if (
+        shape.type === "text" ||
+        shape.type === "geo" ||
+        shape.type === "arrow" ||
+        shape.type === "note"
+      ) {
+        // @ts-expect-error
+        return shape.props.text;
+      }
+    })
+    .filter((v) => v !== null);
+
+  return texts.join("\n");
 }
