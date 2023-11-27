@@ -81,6 +81,9 @@ async function buildPromptForOpenAi(editor: Editor): Promise<GPT4VMessage[]> {
 	// modify it with any other feedback or annotations the user has left.
 	const previousResponseContent = getContentOfPreviousResponse(editor)
 
+	// get all text within the current selection
+	const referenceText = getSelectionAsText(editor)
+
 	// the user messages describe what the user has done and what they want to do next. they'll get
 	// combined with the system prompt to tell gpt-4 what we'd like it to do.
 	const userMessages: MessageContent = [
@@ -101,7 +104,10 @@ async function buildPromptForOpenAi(editor: Editor): Promise<GPT4VMessage[]> {
 		{
 			// send the text of all selected shapes, so that GPT can use it as a reference (if anything is hard to see)
 			type: 'text',
-			text: getSelectionAsText(editor),
+			text:
+				referenceText !== ''
+					? referenceText
+					: 'Oh, it looks like there was not any text in this design!',
 		},
 	]
 
