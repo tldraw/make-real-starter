@@ -120,7 +120,6 @@ export class ResponseShapeUtil extends BaseBoxShapeUtil<ResponseShape> {
 	}
 
 	override toSvg(shape: ResponseShape, _ctx: SvgExportContext): SVGElement | Promise<SVGElement> {
-		console.log('toSvg')
 		const g = document.createElementNS('http://www.w3.org/2000/svg', 'g')
 		// while screenshot is the same as the old one, keep waiting for a new one
 		return new Promise((resolve, _) => {
@@ -145,7 +144,6 @@ export class ResponseShapeUtil extends BaseBoxShapeUtil<ResponseShape> {
 			//request new screenshot
 			const iframe = document.getElementById(`iframe-${shape.id}`) as HTMLIFrameElement
 			if (iframe) {
-				console.log('iframe found')
 				iframe.contentWindow?.postMessage({ action: 'take-screenshot', shapeid: shape.id }, '*')
 			} else {
 				console.log('first level iframe not found or not accessible')
