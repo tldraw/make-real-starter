@@ -4,6 +4,7 @@ import {
 	DefaultSpinner,
 	HTMLContainer,
 	Icon,
+	SvgExportContext,
 	TLBaseShape,
 	stopEventPropagation,
 	toDomPrecision,
@@ -44,7 +45,17 @@ export class ResponseShapeUtil extends BaseBoxShapeUtil<ResponseShape> {
 		// Kind of a hack—we're preventing users from pinching-zooming into the iframe
 		const htmlToUse = shape.props.html.replace(
 			`</body>`,
-			`<script>document.body.addEventListener('wheel', e => { if (!e.ctrlKey) return; e.preventDefault(); return }, { passive: false })</script>
+			`<script src="https://unpkg.com/html2canvas"></script><script>
+			// send the screenshot to the parent window
+  			window.addEventListener('message', function(event) {
+    		if (event.data.action === 'take-screenshot' && event.data.shapeid === "${shape.id}") {
+      		html2canvas(document.body, {useCors : true}).then(function(canvas) {
+        		const data = canvas.toDataURL('image/png');
+        		window.parent.postMessage({screenshot: data, shapeid: "${shape.id}"}, "*");
+      		});
+    		}
+  			}, false);
+			document.body.addEventListener('wheel', e => { if (!e.ctrlKey) return; e.preventDefault(); return }, { passive: false })</script>
 </body>`
 		)
 
@@ -53,6 +64,7 @@ export class ResponseShapeUtil extends BaseBoxShapeUtil<ResponseShape> {
 				{htmlToUse ? (
 					<iframe
 						className="tl-embed"
+						id={`iframe-${shape.id}`}
 						srcDoc={htmlToUse}
 						width={toDomPrecision(shape.props.w)}
 						height={toDomPrecision(shape.props.h)}
@@ -105,6 +117,40 @@ export class ResponseShapeUtil extends BaseBoxShapeUtil<ResponseShape> {
 				</div>
 			</HTMLContainer>
 		)
+	}
+
+	override toSvg(shape: ResponseShape, _ctx: SvgExportContext): SVGElement | Promise<SVGElement> {
+		console.log('toSvg')
+		const g = document.createElementNS('http://www.w3.org/2000/svg', 'g')
+		// while screenshot is the same as the old one, keep waiting for a new one
+		return new Promise((resolve, _) => {
+			if (window === undefined) return resolve(g)
+			const windowListener = (event: MessageEvent) => {
+				if (event.data.screenshot && event.data?.shapeid === shape.id) {
+					const image = document.createElementNS('http://www.w3.org/2000/svg', 'image')
+					image.setAttributeNS('http://www.w3.org/1999/xlink', 'href', event.data.screenshot)
+					image.setAttribute('width', shape.props.w.toString())
+					image.setAttribute('height', shape.props.h.toString())
+					g.appendChild(image)
+					window.removeEventListener('message', windowListener)
+					clearTimeout(timeOut)
+					resolve(g)
+				}
+			}
+			const timeOut = setTimeout(() => {
+				resolve(g)
+				window.removeEventListener('message', windowListener)
+			}, 2000)
+			window.addEventListener('message', windowListener)
+			//request new screenshot
+			const iframe = document.getElementById(`iframe-${shape.id}`) as HTMLIFrameElement
+			if (iframe) {
+				console.log('iframe found')
+				iframe.contentWindow?.postMessage({ action: 'take-screenshot', shapeid: shape.id }, '*')
+			} else {
+				console.log('first level iframe not found or not accessible')
+			}
+		})
 	}
 
 	indicator(shape: ResponseShape) {

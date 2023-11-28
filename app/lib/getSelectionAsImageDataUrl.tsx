@@ -21,5 +21,6 @@ export async function getSelectionAsImageDataUrl(editor: Editor) {
 	})
 
 	if (!blob) throw new Error('Could not get blob')
+	console.log(await blobToBase64(blob))
 	return await blobToBase64(blob)
 }
