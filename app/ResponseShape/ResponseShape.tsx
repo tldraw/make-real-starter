@@ -41,7 +41,7 @@ export class ResponseShapeUtil extends BaseBoxShapeUtil<ResponseShape> {
 		const isEditing = useIsEditing(shape.id)
 		const toast = useToasts()
 
-		// Kind of a hack—we're preventing user's from pinching-zooming into the iframe
+		// Kind of a hack—we're preventing users from pinching-zooming into the iframe
 		const htmlToUse = shape.props.html.replace(
 			`</body>`,
 			`<script>document.body.addEventListener('wheel', e => { if (!e.ctrlKey) return; e.preventDefault(); return }, { passive: false })</script>
