@@ -5,7 +5,7 @@ export async function fetchFromOpenAi(
 	body: GPT4VCompletionRequest
 ): Promise<GPT4VCompletionResponse> {
 	const apiKey = providedApiKey ?? process.env.OPENAI_API_KEY
-
+	const apiUrl = process.env.OPENAI_API_URL || 'https://api.openai.com'
 	if (!apiKey) {
 		throw new Error(
 			'You need to provide an API key. Make sure OPENAI_API_KEY is set in your .env file.'
@@ -13,7 +13,7 @@ export async function fetchFromOpenAi(
 	}
 
 	try {
-		const repsonse = await fetch('https://api.openai.com/v1/chat/completions', {
+		const repsonse = await fetch(`${apiUrl}/v1/chat/completions`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
