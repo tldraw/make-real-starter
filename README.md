@@ -16,7 +16,7 @@ Use this repo as a template to create Make Real style apps like
 
 ## How it works
 
-Make Real is built with [tldraw](tldraw.dev), a very good React library for
+Make Real is built with [tldraw](https://tldraw.dev), a very good React library for
 creating whiteboards and other infinite canvas experiences.
 
 To use it, first draw a mockup for a piece of UI. When
