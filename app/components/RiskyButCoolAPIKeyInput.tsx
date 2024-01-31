@@ -6,9 +6,7 @@ export function RiskyButCoolAPIKeyInput() {
 
 	// Store the API key locally, but ONLY in development mode
 	const handleChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-		if (process.env.NODE_ENV === 'development') {
-			localStorage.setItem('makeitreal_key', e.target.value)
-		}
+		localStorage.setItem('makeitreal_key', e.target.value)
 	}, [])
 
 	const handleQuestionMessage = useCallback(() => {
@@ -18,17 +16,17 @@ export function RiskyButCoolAPIKeyInput() {
 	}, [])
 
 	return (
-		<div
-			className={`your-own-api-key ${
-				breakpoint < 5 ? 'your-own-api-key__mobile' : ''
-			}`}
-		>
+		<div className={`your-own-api-key ${breakpoint < 5 ? 'your-own-api-key__mobile' : ''}`}>
 			<div className="your-own-api-key__inner">
 				<div className="input__wrapper">
 					<input
 						id="openai_key_risky_but_cool"
-						defaultValue={localStorage.getItem('makeitreal_key') ?? ''}
+						defaultValue={
+							localStorage.getItem('makeitreal_key') ?? process.env.OPENAI_API_KEY ?? ''
+						}
 						onChange={handleChange}
+						spellCheck={false}
+						autoCapitalize="off"
 					/>
 				</div>
 				<button className="question__button" onClick={handleQuestionMessage}>

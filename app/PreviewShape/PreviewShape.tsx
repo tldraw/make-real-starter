@@ -6,13 +6,15 @@ import {
 	Icon,
 	SvgExportContext,
 	TLBaseShape,
+	Vec,
 	stopEventPropagation,
 	toDomPrecision,
 	useIsEditing,
 	useToasts,
+	useValue,
 } from '@tldraw/tldraw'
 
-export type ResponseShape = TLBaseShape<
+export type PreviewShape = TLBaseShape<
 	'response',
 	{
 		html: string
@@ -21,10 +23,10 @@ export type ResponseShape = TLBaseShape<
 	}
 >
 
-export class ResponseShapeUtil extends BaseBoxShapeUtil<ResponseShape> {
+export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
 	static override type = 'response' as const
 
-	getDefaultProps(): ResponseShape['props'] {
+	getDefaultProps(): PreviewShape['props'] {
 		return {
 			html: '',
 			w: (960 * 2) / 3,
@@ -38,9 +40,18 @@ export class ResponseShapeUtil extends BaseBoxShapeUtil<ResponseShape> {
 	override canBind = () => false
 	override canUnmount = () => false
 
-	override component(shape: ResponseShape) {
+	override component(shape: PreviewShape) {
 		const isEditing = useIsEditing(shape.id)
 		const toast = useToasts()
+
+		const boxShadow = useValue(
+			'box shadow',
+			() => {
+				const rotation = this.editor.getShapePageTransform(shape)!.rotation()
+				return getRotatedBoxShadow(rotation)
+			},
+			[this.editor]
+		)
 
 		// Kind of a hack—we're preventing users from pinching-zooming into the iframe
 		const htmlToUse = shape.props.html.replace(
@@ -63,15 +74,16 @@ export class ResponseShapeUtil extends BaseBoxShapeUtil<ResponseShape> {
 			<HTMLContainer className="tl-embed-container" id={shape.id}>
 				{htmlToUse ? (
 					<iframe
-						className="tl-embed"
-						id={`iframe-${shape.id}`}
+						id={`iframe-1-${shape.id}`}
 						srcDoc={htmlToUse}
 						width={toDomPrecision(shape.props.w)}
 						height={toDomPrecision(shape.props.h)}
 						draggable={false}
 						style={{
-							border: 0,
 							pointerEvents: isEditing ? 'auto' : 'none',
+							boxShadow,
+							border: '1px solid var(--color-panel-contrast)',
+							borderRadius: 'var(--radius-2)',
 						}}
 					/>
 				) : (
@@ -115,11 +127,40 @@ export class ResponseShapeUtil extends BaseBoxShapeUtil<ResponseShape> {
 				>
 					<Icon icon="duplicate" />
 				</div>
+				{htmlToUse && (
+					<div
+						style={{
+							textAlign: 'center',
+							position: 'absolute',
+							bottom: isEditing ? -40 : 0,
+							padding: 4,
+							fontFamily: 'inherit',
+							fontSize: 12,
+							left: 0,
+							width: '100%',
+							display: 'flex',
+							alignItems: 'center',
+							justifyContent: 'center',
+							pointerEvents: 'none',
+						}}
+					>
+						<span
+							style={{
+								background: 'var(--color-panel)',
+								padding: '4px 12px',
+								borderRadius: 99,
+								border: '1px solid var(--color-muted-1)',
+							}}
+						>
+							{isEditing ? 'Click the canvas to exit' : 'Double click to interact'}
+						</span>
+					</div>
+				)}
 			</HTMLContainer>
 		)
 	}
 
-	override toSvg(shape: ResponseShape, _ctx: SvgExportContext): SVGElement | Promise<SVGElement> {
+	override toSvg(shape: PreviewShape, _ctx: SvgExportContext): SVGElement | Promise<SVGElement> {
 		const g = document.createElementNS('http://www.w3.org/2000/svg', 'g')
 		// while screenshot is the same as the old one, keep waiting for a new one
 		return new Promise((resolve, _) => {
@@ -142,16 +183,46 @@ export class ResponseShapeUtil extends BaseBoxShapeUtil<ResponseShape> {
 			}, 2000)
 			window.addEventListener('message', windowListener)
 			//request new screenshot
-			const iframe = document.getElementById(`iframe-${shape.id}`) as HTMLIFrameElement
-			if (iframe) {
-				iframe.contentWindow?.postMessage({ action: 'take-screenshot', shapeid: shape.id }, '*')
+			const firstLevelIframe = document.getElementById(`iframe-1-${shape.id}`) as HTMLIFrameElement
+			if (firstLevelIframe) {
+				firstLevelIframe.contentWindow!.postMessage(
+					{ action: 'take-screenshot', shapeid: shape.id },
+					'*'
+				)
 			} else {
 				console.log('first level iframe not found or not accessible')
 			}
 		})
 	}
 
-	indicator(shape: ResponseShape) {
+	indicator(shape: PreviewShape) {
 		return <rect width={shape.props.w} height={shape.props.h} />
 	}
 }
+
+function getRotatedBoxShadow(rotation: number) {
+	const cssStrings = ROTATING_BOX_SHADOWS.map((shadow) => {
+		const { offsetX, offsetY, blur, spread, color } = shadow
+		const vec = new Vec(offsetX, offsetY)
+		const { x, y } = vec.rot(-rotation)
+		return `${x}px ${y}px ${blur}px ${spread}px ${color}`
+	})
+	return cssStrings.join(', ')
+}
+
+const ROTATING_BOX_SHADOWS = [
+	{
+		offsetX: 0,
+		offsetY: 2,
+		blur: 4,
+		spread: -1,
+		color: '#0000003a',
+	},
+	{
+		offsetX: 0,
+		offsetY: 3,
+		blur: 12,
+		spread: -2,
+		color: '#0000001f',
+	},
+]
