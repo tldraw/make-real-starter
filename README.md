@@ -36,7 +36,7 @@ To change how Make Real works, start from the [`makeReal()`](./app/makeReal.tsx)
 function. From there, you can change the prompt that gets sent to gpt-4.
 
 If you'd like Make Real to create something other than HTML, you'll need to
-either update the [`ResponseShape`](./app/ResponseShape/ResponseShape.tsx) to
+either update the [`PreviewShape`](./app/PreviewShape/PreviewShape.tsx) to
 display something different, or use one of tldraw's built-in shapes like image
 or text.
 
