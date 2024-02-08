@@ -9,6 +9,7 @@ export async function makeReal(editor: Editor, apiKey: string) {
 	// Get the selected shapes (we need at least one)
 	const selectedShapes = editor.getSelectedShapes()
 
+	const openAIOrganizationId = process.env.OPENAI_ORGANIZATION_ID ?? ''
 	if (selectedShapes.length === 0) throw Error('First select something to make real.')
 
 	// Create the preview shape
@@ -58,6 +59,7 @@ export async function makeReal(editor: Editor, apiKey: string) {
 		const json = await getHtmlFromOpenAI({
 			image: dataUrl,
 			apiKey,
+			openAIOrganizationId,
 			text: getSelectionAsText(editor),
 			previousPreviews,
 			grid,

@@ -8,6 +8,7 @@ import {
 export async function getHtmlFromOpenAI({
 	image,
 	apiKey,
+	openAIOrganizationId,
 	text,
 	grid,
 	theme = 'light',
@@ -15,6 +16,7 @@ export async function getHtmlFromOpenAI({
 }: {
 	image: string
 	apiKey: string
+	openAIOrganizationId: string
 	text: string
 	theme?: string
 	grid?: {
@@ -102,13 +104,19 @@ export async function getHtmlFromOpenAI({
 
 	let json = null
 
+	const headers: Record<string, string> = {
+	  'Content-Type': 'application/json',
+	  Authorization: `Bearer ${apiKey}`,
+	};
+
+	if (openAIOrganizationId) {
+	  headers['OpenAI-Organization'] = openAIOrganizationId;
+	}
+
 	try {
 		const resp = await fetch('https://api.openai.com/v1/chat/completions', {
 			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-				Authorization: `Bearer ${apiKey}`,
-			},
+			headers,
 			body: JSON.stringify(body),
 		})
 		json = await resp.json()
