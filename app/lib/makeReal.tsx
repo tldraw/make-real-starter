@@ -1,9 +1,9 @@
 import { Editor, createShapeId, getSvgAsImage, track } from '@tldraw/tldraw'
-import { getSelectionAsText } from './lib/getSelectionAsText'
-import { getHtmlFromOpenAI } from './lib/getHtmlFromOpenAI'
-import { blobToBase64 } from './lib/blobToBase64'
-import { addGridToSvg } from './lib/addGridToSvg'
-import { PreviewShape } from './PreviewShape/PreviewShape'
+import { getSelectionAsText } from './getSelectionAsText'
+import { getHtmlFromOpenAI } from './getHtmlFromOpenAI'
+import { blobToBase64 } from './blobToBase64'
+import { addGridToSvg } from './addGridToSvg'
+import { PreviewShape } from '../PreviewShape/PreviewShape'
 
 export async function makeReal(editor: Editor, apiKey: string) {
 	// Get the selected shapes (we need at least one)
