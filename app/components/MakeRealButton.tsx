@@ -1,6 +1,6 @@
-import { useEditor, useToasts } from '@tldraw/tldraw'
+import { useEditor, useToasts } from 'tldraw'
 import { useCallback } from 'react'
-import { makeReal } from '../makeReal'
+import { makeReal } from '../lib/makeReal'
 
 export function MakeRealButton() {
 	const editor = useEditor()
@@ -10,12 +10,12 @@ export function MakeRealButton() {
 		try {
 			const input = document.getElementById('openai_key_risky_but_cool') as HTMLInputElement
 			const apiKey = input?.value ?? null
-			if (!apiKey) throw Error('Make sure the input includes your API Key!')
+			if (!apiKey) throw Error('Make sure you include your API Key!')
 			await makeReal(editor, apiKey)
 		} catch (e) {
 			console.error(e)
 			addToast({
-				icon: 'cross-2',
+				icon: 'info-circle',
 				title: 'Something went wrong',
 				description: (e as Error).message.slice(0, 100),
 			})

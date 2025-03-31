@@ -1,15 +1,10 @@
 import { PreviewShape } from '../PreviewShape/PreviewShape'
-import {
-	OPENAI_USER_PROMPT,
-	OPENAI_USER_PROMPT_WITH_PREVIOUS_DESIGN,
-	OPEN_AI_SYSTEM_PROMPT,
-} from '../prompt'
+import { SYSTEM_PROMPT, USER_PROMPT_WITH_PREVIOUS_DESIGN, USER_PROMPT } from '../prompt'
 
 export async function getHtmlFromOpenAI({
 	image,
 	apiKey,
 	text,
-	grid,
 	theme = 'light',
 	previousPreviews = [],
 }: {
@@ -17,11 +12,6 @@ export async function getHtmlFromOpenAI({
 	apiKey: string
 	text: string
 	theme?: string
-	grid?: {
-		color: string
-		size: number
-		labels: boolean
-	}
 	previousPreviews?: PreviewShape[]
 }) {
 	if (!apiKey) throw Error('You need to provide an API key (sorry)')
@@ -29,7 +19,7 @@ export async function getHtmlFromOpenAI({
 	const messages: GPT4VCompletionRequest['messages'] = [
 		{
 			role: 'system',
-			content: OPEN_AI_SYSTEM_PROMPT,
+			content: SYSTEM_PROMPT,
 		},
 		{
 			role: 'user',
@@ -42,8 +32,7 @@ export async function getHtmlFromOpenAI({
 	// Add the prompt into
 	userContent.push({
 		type: 'text',
-		text:
-			previousPreviews?.length > 0 ? OPENAI_USER_PROMPT_WITH_PREVIOUS_DESIGN : OPENAI_USER_PROMPT,
+		text: previousPreviews?.length > 0 ? USER_PROMPT_WITH_PREVIOUS_DESIGN : USER_PROMPT,
 	})
 
 	// Add the image
@@ -60,13 +49,6 @@ export async function getHtmlFromOpenAI({
 		userContent.push({
 			type: 'text',
 			text: `Here's a list of text that we found in the design:\n${text}`,
-		})
-	}
-
-	if (grid) {
-		userContent.push({
-			type: 'text',
-			text: `The designs have a ${grid.color} grid overlaid on top. Each cell of the grid is ${grid.size}x${grid.size}px.`,
 		})
 	}
 
@@ -92,7 +74,7 @@ export async function getHtmlFromOpenAI({
 	})
 
 	const body: GPT4VCompletionRequest = {
-		model: 'gpt-4-vision-preview',
+		model: 'gpt-4o',
 		max_tokens: 4096,
 		temperature: 0,
 		messages,
@@ -139,7 +121,7 @@ type MessageContent =
 	  )[]
 
 export type GPT4VCompletionRequest = {
-	model: 'gpt-4-vision-preview'
+	model: 'gpt-4o'
 	messages: {
 		role: 'system' | 'user' | 'assistant' | 'function'
 		content: MessageContent

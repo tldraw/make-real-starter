@@ -1,10 +1,9 @@
-import { Icon, useBreakpoint } from '@tldraw/tldraw'
+import { TldrawUiIcon, useBreakpoint } from 'tldraw'
 import { ChangeEvent, useCallback } from 'react'
 
 export function RiskyButCoolAPIKeyInput() {
 	const breakpoint = useBreakpoint()
 
-	// Store the API key locally, but ONLY in development mode
 	const handleChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
 		localStorage.setItem('makeitreal_key', e.target.value)
 	}, [])
@@ -22,7 +21,7 @@ export function RiskyButCoolAPIKeyInput() {
 					<input
 						id="openai_key_risky_but_cool"
 						defaultValue={
-							localStorage.getItem('makeitreal_key') ?? process.env.OPENAI_API_KEY ?? ''
+							process.env.NEXT_PUBLIC_OPENAI_API_KEY ?? localStorage.getItem('makeitreal_key') ?? ''
 						}
 						onChange={handleChange}
 						spellCheck={false}
@@ -30,7 +29,7 @@ export function RiskyButCoolAPIKeyInput() {
 					/>
 				</div>
 				<button className="question__button" onClick={handleQuestionMessage}>
-					<Icon icon="question" />
+					<TldrawUiIcon icon="question" />
 				</button>
 			</div>
 		</div>
