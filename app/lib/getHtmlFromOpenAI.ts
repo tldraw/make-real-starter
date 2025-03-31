@@ -1,9 +1,5 @@
 import { PreviewShape } from '../PreviewShape/PreviewShape'
-import {
-	OPENAI_USER_PROMPT,
-	OPENAI_USER_PROMPT_WITH_PREVIOUS_DESIGN,
-	OPEN_AI_SYSTEM_PROMPT,
-} from '../prompt'
+import { SYSTEM_PROMPT, USER_PROMPT_WITH_PREVIOUS_DESIGN, USER_PROMPT } from '../prompt'
 
 export async function getHtmlFromOpenAI({
 	image,
@@ -23,7 +19,7 @@ export async function getHtmlFromOpenAI({
 	const messages: GPT4VCompletionRequest['messages'] = [
 		{
 			role: 'system',
-			content: OPEN_AI_SYSTEM_PROMPT,
+			content: SYSTEM_PROMPT,
 		},
 		{
 			role: 'user',
@@ -36,8 +32,7 @@ export async function getHtmlFromOpenAI({
 	// Add the prompt into
 	userContent.push({
 		type: 'text',
-		text:
-			previousPreviews?.length > 0 ? OPENAI_USER_PROMPT_WITH_PREVIOUS_DESIGN : OPENAI_USER_PROMPT,
+		text: previousPreviews?.length > 0 ? USER_PROMPT_WITH_PREVIOUS_DESIGN : USER_PROMPT,
 	})
 
 	// Add the image
