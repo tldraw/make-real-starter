@@ -22,7 +22,7 @@ export function RiskyButCoolAPIKeyInput() {
 					<input
 						id="openai_key_risky_but_cool"
 						defaultValue={
-							localStorage.getItem('makeitreal_key') ?? process.env.OPENAI_API_KEY ?? ''
+							process.env.NEXT_PUBLIC_OPENAI_API_KEY ?? localStorage.getItem('makeitreal_key') ?? ''
 						}
 						onChange={handleChange}
 						spellCheck={false}
