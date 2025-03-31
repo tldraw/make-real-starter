@@ -1,4 +1,4 @@
-import { Icon, useBreakpoint } from '@tldraw/tldraw'
+import { TldrawUiIcon, useBreakpoint } from 'tldraw'
 import { ChangeEvent, useCallback } from 'react'
 
 export function RiskyButCoolAPIKeyInput() {
@@ -30,7 +30,7 @@ export function RiskyButCoolAPIKeyInput() {
 					/>
 				</div>
 				<button className="question__button" onClick={handleQuestionMessage}>
-					<Icon icon="question" />
+					<TldrawUiIcon icon="question" />
 				</button>
 			</div>
 		</div>

@@ -1,4 +1,4 @@
-import { useBreakpoint } from '@tldraw/tldraw'
+import { useBreakpoint } from 'tldraw'
 
 export function TldrawLogo() {
 	const breakpoint = useBreakpoint()
@@ -7,13 +7,7 @@ export function TldrawLogo() {
 			className={`tldrawLogo ${breakpoint < 5 ? 'tldrawLogo__mobile' : ''}`}
 			href="https://www.tldraw.dev"
 		>
-			<svg
-				width="110"
-				height="40"
-				viewBox="0 0 71 18"
-				fill="none"
-				style={{ padding: 8 }}
-			>
+			<svg width="110" height="40" viewBox="0 0 71 18" fill="none" style={{ padding: 8 }}>
 				<path
 					fillRule="evenodd"
 					clipRule="evenodd"

@@ -1,18 +1,19 @@
 /* eslint-disable react-hooks/rules-of-hooks */
+import { ReactElement } from 'react'
 import {
-	BaseBoxShapeUtil,
-	DefaultSpinner,
-	HTMLContainer,
-	Icon,
-	SvgExportContext,
 	TLBaseShape,
-	Vec,
-	stopEventPropagation,
-	toDomPrecision,
+	BaseBoxShapeUtil,
 	useIsEditing,
 	useToasts,
 	useValue,
-} from '@tldraw/tldraw'
+	HTMLContainer,
+	toDomPrecision,
+	DefaultSpinner,
+	stopEventPropagation,
+	SvgExportContext,
+	Vec,
+	TldrawUiIcon,
+} from 'tldraw'
 
 export type PreviewShape = TLBaseShape<
 	'response',
@@ -38,7 +39,6 @@ export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
 	override isAspectRatioLocked = () => false
 	override canResize = () => true
 	override canBind = () => false
-	override canUnmount = () => false
 
 	override component(shape: PreviewShape) {
 		const isEditing = useIsEditing(shape.id)
@@ -125,7 +125,7 @@ export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
 					}}
 					onPointerDown={stopEventPropagation}
 				>
-					<Icon icon="duplicate" />
+					<TldrawUiIcon icon="duplicate" />
 				</div>
 				{htmlToUse && (
 					<div
@@ -160,37 +160,36 @@ export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
 		)
 	}
 
-	override toSvg(shape: PreviewShape, _ctx: SvgExportContext): SVGElement | Promise<SVGElement> {
-		const g = document.createElementNS('http://www.w3.org/2000/svg', 'g')
+	override toSvg(shape: PreviewShape, _ctx: SvgExportContext) {
 		// while screenshot is the same as the old one, keep waiting for a new one
-		return new Promise((resolve, _) => {
-			if (window === undefined) return resolve(g)
+		return new Promise<ReactElement>((resolve, reject) => {
+			if (window === undefined) {
+				reject()
+				return
+			}
+
 			const windowListener = (event: MessageEvent) => {
 				if (event.data.screenshot && event.data?.shapeid === shape.id) {
-					const image = document.createElementNS('http://www.w3.org/2000/svg', 'image')
-					image.setAttributeNS('http://www.w3.org/1999/xlink', 'href', event.data.screenshot)
-					image.setAttribute('width', shape.props.w.toString())
-					image.setAttribute('height', shape.props.h.toString())
-					g.appendChild(image)
 					window.removeEventListener('message', windowListener)
 					clearTimeout(timeOut)
-					resolve(g)
+
+					resolve(<PreviewImage href={event.data.screenshot} shape={shape} />)
 				}
 			}
 			const timeOut = setTimeout(() => {
-				resolve(g)
+				reject()
 				window.removeEventListener('message', windowListener)
 			}, 2000)
 			window.addEventListener('message', windowListener)
 			//request new screenshot
 			const firstLevelIframe = document.getElementById(`iframe-1-${shape.id}`) as HTMLIFrameElement
 			if (firstLevelIframe) {
-				firstLevelIframe.contentWindow!.postMessage(
+				firstLevelIframe.contentWindow?.postMessage(
 					{ action: 'take-screenshot', shapeid: shape.id },
 					'*'
 				)
 			} else {
-				console.log('first level iframe not found or not accessible')
+				console.error('first level iframe not found or not accessible')
 			}
 		})
 	}
@@ -208,6 +207,10 @@ function getRotatedBoxShadow(rotation: number) {
 		return `${x}px ${y}px ${blur}px ${spread}px ${color}`
 	})
 	return cssStrings.join(', ')
+}
+
+function PreviewImage({ shape, href }: { shape: PreviewShape; href: string }) {
+	return <image href={href} width={shape.props.w.toString()} height={shape.props.h.toString()} />
 }
 
 const ROTATING_BOX_SHADOWS = [

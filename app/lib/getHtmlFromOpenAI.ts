@@ -9,7 +9,6 @@ export async function getHtmlFromOpenAI({
 	image,
 	apiKey,
 	text,
-	grid,
 	theme = 'light',
 	previousPreviews = [],
 }: {
@@ -17,11 +16,6 @@ export async function getHtmlFromOpenAI({
 	apiKey: string
 	text: string
 	theme?: string
-	grid?: {
-		color: string
-		size: number
-		labels: boolean
-	}
 	previousPreviews?: PreviewShape[]
 }) {
 	if (!apiKey) throw Error('You need to provide an API key (sorry)')
@@ -63,13 +57,6 @@ export async function getHtmlFromOpenAI({
 		})
 	}
 
-	if (grid) {
-		userContent.push({
-			type: 'text',
-			text: `The designs have a ${grid.color} grid overlaid on top. Each cell of the grid is ${grid.size}x${grid.size}px.`,
-		})
-	}
-
 	// Add the previous previews as HTML
 	for (let i = 0; i < previousPreviews.length; i++) {
 		const preview = previousPreviews[i]
@@ -92,7 +79,7 @@ export async function getHtmlFromOpenAI({
 	})
 
 	const body: GPT4VCompletionRequest = {
-		model: 'gpt-4-vision-preview',
+		model: 'gpt-4o',
 		max_tokens: 4096,
 		temperature: 0,
 		messages,
@@ -139,7 +126,7 @@ type MessageContent =
 	  )[]
 
 export type GPT4VCompletionRequest = {
-	model: 'gpt-4-vision-preview'
+	model: 'gpt-4o'
 	messages: {
 		role: 'system' | 'user' | 'assistant' | 'function'
 		content: MessageContent
