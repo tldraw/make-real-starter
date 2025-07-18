@@ -29,7 +29,7 @@ export function RiskyButCoolAPIKeyInput() {
 					/>
 				</div>
 				<button className="question__button" onClick={handleQuestionMessage}>
-					<TldrawUiIcon icon="question" />
+					<TldrawUiIcon icon="question" label="Question" />
 				</button>
 			</div>
 		</div>
