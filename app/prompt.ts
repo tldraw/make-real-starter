@@ -16,7 +16,7 @@ When sent new designs, you should reply with a high-fidelity working prototype a
 	- Use unpkg or skypack to import any required JavaScript dependencies.
 	- Use Google fonts to pull in any open source fonts you require.
 	- If you have any images, load them from Unsplash or use solid colored rectangles as placeholders.
-	- Create SVGs as needed for any icons.
+	- Never create icons yourself, use an icon font or external library.
 
 ## Additional Instructions
 
