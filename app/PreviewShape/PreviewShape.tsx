@@ -54,6 +54,7 @@ export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
 		)
 
 		// Kind of a hack—we're preventing users from pinching-zooming into the iframe
+		console.log('Rendering HTML:', shape.props.html)
 		const htmlToUse = shape.props.html.replace(
 			`</body>`,
 			`<script src="https://unpkg.com/html2canvas"></script><script>
@@ -125,7 +126,7 @@ export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
 					}}
 					onPointerDown={stopEventPropagation}
 				>
-					<TldrawUiIcon icon="duplicate" />
+					<TldrawUiIcon icon="duplicate" label="duplicate" />
 				</div>
 				{htmlToUse && (
 					<div

@@ -1,7 +1,7 @@
 import { PreviewShape } from '../PreviewShape/PreviewShape'
 import { SYSTEM_PROMPT, USER_PROMPT_WITH_PREVIOUS_DESIGN, USER_PROMPT } from '../prompt'
 
-export async function getHtmlFromOpenAI({
+export async function getTikzFromOpenAI({
 	image,
 	apiKey,
 	text,
@@ -52,30 +52,28 @@ export async function getHtmlFromOpenAI({
 		})
 	}
 
-	// Add the previous previews as HTML
+	// Add the previous previews as TikZ
 	for (let i = 0; i < previousPreviews.length; i++) {
 		const preview = previousPreviews[i]
 		userContent.push(
 			{
 				type: 'text',
-				text: `The designs also included one of your previous result. Here's the image that you used as its source:`,
-			},
-			{
-				type: 'text',
-				text: `And here's the HTML you came up with for it: ${preview.props.html}`,
+				text: `The designs also included one of your previous results. Here's the TikZ code you generated before: ${preview.props.html}`,
 			}
 		)
 	}
 
-	// Prompt the theme
-	userContent.push({
-		type: 'text',
-		text: `Please make your result use the ${theme} theme.`,
-	})
+	// Note: TikZ doesn't use themes in the same way, but we keep this for potential color adjustments
+	if (theme === 'dark') {
+		userContent.push({
+			type: 'text',
+			text: `Use lighter colors that would work well on a dark background.`,
+		})
+	}
 
 	const body: GPT4VCompletionRequest = {
-		model: 'gpt-4o',
-		max_tokens: 4096,
+		model: 'gpt-5.1',
+		max_completion_tokens: 4096,
 		temperature: 0,
 		messages,
 		seed: 42,
@@ -121,7 +119,7 @@ type MessageContent =
 	  )[]
 
 export type GPT4VCompletionRequest = {
-	model: 'gpt-4o'
+	model: 'gpt-5.1'
 	messages: {
 		role: 'system' | 'user' | 'assistant' | 'function'
 		content: MessageContent
@@ -132,7 +130,7 @@ export type GPT4VCompletionRequest = {
 	stream?: boolean | undefined
 	temperature?: number | undefined
 	top_p?: number | undefined
-	max_tokens?: number | undefined
+	max_completion_tokens?: number | undefined
 	n?: number | undefined
 	best_of?: number | undefined
 	frequency_penalty?: number | undefined
