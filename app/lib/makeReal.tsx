@@ -1,4 +1,4 @@
-import { Editor, createShapeId, getSvgAsImage, track } from 'tldraw'
+import { Editor, createShapeId } from 'tldraw'
 import { PreviewShape } from '../PreviewShape/PreviewShape'
 import { blobToBase64 } from './blobToBase64'
 import { getHtmlFromOpenAI } from './getHtmlFromOpenAI'

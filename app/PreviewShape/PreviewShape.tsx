@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import { ReactElement } from 'react'
 import {
-	TLBaseShape,
+	TLShape,
 	BaseBoxShapeUtil,
 	useIsEditing,
 	useToasts,
@@ -15,14 +15,17 @@ import {
 	TldrawUiIcon,
 } from 'tldraw'
 
-export type PreviewShape = TLBaseShape<
-	'response',
-	{
-		html: string
-		w: number
-		h: number
+declare module 'tldraw' {
+	interface TLGlobalShapePropsMap {
+		response: {
+			html: string
+			w: number
+			h: number
+		}
 	}
->
+}
+
+export type PreviewShape = TLShape<'response'>
 
 export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
 	static override type = 'response' as const
@@ -125,7 +128,7 @@ export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
 					}}
 					onPointerDown={stopEventPropagation}
 				>
-					<TldrawUiIcon icon="duplicate" />
+					<TldrawUiIcon icon="duplicate" label="Copy preview HTML" />
 				</div>
 				{htmlToUse && (
 					<div
